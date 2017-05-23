@@ -1,0 +1,47 @@
+# appveyor file
+# http://www.appveyor.com/docs/appveyor-yml
+
+shallow_clone: true
+
+init:
+  - git config --global core.autocrlf true
+
+image:
+  - Visual Studio 2017
+
+environment:
+  nodejs_version: "4.2"
+  PLATFORM: windows-10-store
+  matrix:
+    - PLUGIN: cordova-plugin-console
+    - PLUGIN: cordova-plugin-device
+    - PLUGIN: cordova-plugin-media-capture
+    - PLUGIN: cordova-plugin-camera
+    - PLUGIN: cordova-plugin-network-information
+    - PLUGIN: cordova-plugin-device-motion
+    - PLUGIN: cordova-plugin-vibration
+    - PLUGIN: cordova-plugin-statusbar
+    - PLUGIN: cordova-plugin-globalization
+    - PLUGIN: cordova-plugin-device-orientation
+    - PLUGIN: cordova-plugin-battery-status
+    - PLUGIN: cordova-plugin-contacts
+    - PLUGIN: cordova-plugin-media
+    - PLUGIN: cordova-plugin-geolocation
+    - PLUGIN: cordova-plugin-dialogs
+    - PLUGIN: cordova-plugin-inappbrowser
+    - PLUGIN: cordova-plugin-file
+    - PLUGIN: cordova-plugin-file-transfer
+    - PLUGIN: cordova-plugin-splashscreen
+    - PLUGIN: cordova-plugin-screen-orientation
+
+install:
+  - npm cache clean -f
+  - node --version
+  - npm install -g cordova-paramedic@https://github.com/apache/cordova-paramedic.git
+  - npm install -g cordova@nightly
+  - git clone --depth=1 --branch=master https://github.com/apache/%PLUGIN%
+
+build: off
+
+test_script:
+  - cordova-paramedic --config periodic\%PLATFORM% --plugin %cd%\%PLUGIN% --justBuild
