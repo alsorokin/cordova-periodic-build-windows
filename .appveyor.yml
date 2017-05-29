@@ -13,35 +13,52 @@ environment:
   nodejs_version: "4.2"
   PLATFORM: windows-10-store
   matrix:
-    - PLUGIN: cordova-plugin-console
-    - PLUGIN: cordova-plugin-device
-    - PLUGIN: cordova-plugin-media-capture
-    - PLUGIN: cordova-plugin-camera
-    - PLUGIN: cordova-plugin-network-information
-    - PLUGIN: cordova-plugin-device-motion
-    - PLUGIN: cordova-plugin-vibration
-    - PLUGIN: cordova-plugin-statusbar
-    - PLUGIN: cordova-plugin-globalization
-    - PLUGIN: cordova-plugin-device-orientation
     - PLUGIN: cordova-plugin-battery-status
+    - PLUGIN: cordova-plugin-camera
+    - PLUGIN: cordova-plugin-console
     - PLUGIN: cordova-plugin-contacts
-    - PLUGIN: cordova-plugin-media
-    - PLUGIN: cordova-plugin-geolocation
+    - PLUGIN: cordova-plugin-device
+    - PLUGIN: cordova-plugin-device-motion
+    - PLUGIN: cordova-plugin-device-orientation
     - PLUGIN: cordova-plugin-dialogs
-    - PLUGIN: cordova-plugin-inappbrowser
     - PLUGIN: cordova-plugin-file
     - PLUGIN: cordova-plugin-file-transfer
-    - PLUGIN: cordova-plugin-splashscreen
+    - PLUGIN: cordova-plugin-geolocation
+    - PLUGIN: cordova-plugin-globalization
+    - PLUGIN: cordova-plugin-inappbrowser
+    - PLUGIN: cordova-plugin-media
+    - PLUGIN: cordova-plugin-media-capture
+    - PLUGIN: cordova-plugin-network-information
     - PLUGIN: cordova-plugin-screen-orientation
+    - PLUGIN: cordova-plugin-splashscreen
+    - PLUGIN: cordova-plugin-statusbar
+    - PLUGIN: cordova-plugin-vibration
 
 install:
   - npm cache clean -f
   - node --version
   - npm install -g cordova-paramedic@https://github.com/apache/cordova-paramedic.git
-  - npm install -g cordova@nightly
   - git clone --depth=1 --branch=master https://github.com/apache/%PLUGIN%
+  # installing dev cordova
+  - git clone --depth=1 --branch=master https://github.com/apache/cordova-lib
+  - git clone --depth=1 --branch=master https://github.com/apache/cordova-js
+  - git clone --depth=1 --branch=master https://github.com/apache/cordova-cli
+  - git clone --depth=1 --branch=master https://github.com/apache/cordova-create
+  - cd cordova-js && npm install && npm link && cd ..
+  - cd cordova-lib/cordova-common && npm install && npm link && cd ..\..
+  - cd cordova-lib/cordova-fetch && npm install && npm link && cd ..\..
+  - cd cordova-create && npm install && npm link && cd ..
+  - cd cordova-lib/cordova-serve && npm install && npm link && cd ..\..
+  - cd cordova-lib/cordova-lib && npm install && npm link && cd ..\..
+  - cd cordova-cli && npm install && npm link && cd ..
+  - cd cordova-lib/cordova-fetch && npm link cordova-common && cd ..\..
+  - cd cordova-create && npm link cordova-common cordova-fetch && cd ..
+  - cd cordova-lib/cordova-lib && npm link cordova-common cordova-create cordova-fetch cordova-js cordova-serve && cd ..\..
+  - cd cordova-cli && npm link cordova-common cordova-create cordova-fetch cordova-js cordova-lib cordova-serve && cd ..
+  - cordova-cli\bin\cordova -v
 
 build: off
 
 test_script:
-  - cordova-paramedic --config periodic\%PLATFORM% --plugin %cd%\%PLUGIN% --justBuild
+  - set CLI_ARG="--cli cordova-cli\bin\cordova"
+  - cordova-paramedic --config periodic\%PLATFORM% --plugin %cd%\%PLUGIN% --justBuild %CLI_ARG%
