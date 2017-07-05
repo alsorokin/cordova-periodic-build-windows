@@ -39,22 +39,12 @@ install:
   - node --version
   - npm install -g cordova-paramedic@https://github.com/apache/cordova-paramedic.git
   - git clone --depth=1 --branch=master https://github.com/apache/%PLUGIN%
+  - git clone --depth=1 --branch=master https://github.com/apache/cordova-coho
+  - cd cordova-coho\src && npm install && cd ..
   # installing dev cordova
-  - git clone --depth=1 --branch=master https://github.com/apache/cordova-lib
-  - git clone --depth=1 --branch=master https://github.com/apache/cordova-js
-  - git clone --depth=1 --branch=master https://github.com/apache/cordova-cli
-  - git clone --depth=1 --branch=master https://github.com/apache/cordova-create
-  - cd cordova-js && npm install && npm link && cd ..
-  - cd cordova-lib/cordova-common && npm install && npm link && cd ..\..
-  - cd cordova-lib/cordova-fetch && npm install && npm link && cd ..\..
-  - cd cordova-create && npm install && npm link && cd ..
-  - cd cordova-lib/cordova-serve && npm install && npm link && cd ..\..
-  - cd cordova-lib/cordova-lib && npm install && npm link && cd ..\..
-  - cd cordova-cli && npm install && npm link && cd ..
-  - cd cordova-lib/cordova-fetch && npm link cordova-common && cd ..\..
-  - cd cordova-create && npm link cordova-common cordova-fetch && cd ..
-  - cd cordova-lib/cordova-lib && npm link cordova-common cordova-create cordova-fetch cordova-js cordova-serve && cd ..\..
-  - cd cordova-cli && npm link cordova-common cordova-create cordova-fetch cordova-js cordova-lib cordova-serve && cd ..
+  - cordova-coho\coho repo-clone -r tools
+  - cordova-coho\coho npm-link
+  - cd cordova-cli && npm install && cd ..
   - cordova-cli\bin\cordova -v
 
 build: off
